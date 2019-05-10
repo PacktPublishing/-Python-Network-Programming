@@ -1,0 +1,32 @@
+- random2.py script
+
+echou@ubuntu:~$ cat random2.py
+#!/usr/bin/env python3
+
+import random
+
+print(int(random.randint(0, 10)))
+
+
+- Cacti DB Adapter Interactive session
+
+>>> from cactidbadapter import CactiDBAdapter
+>>> cacti = CactiDBAdapter(database='cacti', user='cacti', password='password', port=3306)
+>>> cacti.get_host()
+[{'hostname': '127.0.0.1', 'id': 1, 'description': 'Localhost'}, {'hostname': '172.16.1.82', 'id': 3, 'description': 'nx-osv-1'}]
+>>> columns = ('id', 'hostname', 'description',)
+>>> res = cacti.get_host(columns=columns)
+>>> import pprint
+>>> pprint.pprint(res)
+[{'description': 'Localhost', 'hostname': '127.0.0.1', 'id': 1},
+ {'description': 'nx-osv-1', 'hostname': '172.16.1.82', 'id': 3}]
+
+- RRDTool module Interactive session
+
+$ sudo python3
+>>> import rrdtool
+>>> rrdtool.update("/var/lib/cacti/rra/ds_17.rrd", "N:20")
+>>> rrdtool.update("/var/lib/cacti/rra/ds_17.rrd", "N:21")
+>>> rrdtool.update("/var/lib/cacti/rra/ds_17.rrd", "N:24")
+>>> exit()
+

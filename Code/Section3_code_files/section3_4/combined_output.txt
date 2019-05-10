@@ -1,0 +1,75 @@
+- Python built-in HTTP Server:
+
+cisco@server:~$ python3 -m http.server
+Serving HTTP on 0.0.0.0 port 8000 ...
+
+- Client curl toward server:
+
+cisco@client:~$ curl 10.0.0.10:8000
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+....
+</ul>
+<hr>
+</body>
+</html>
+
+- IOSv NetFlow Configuration:
+
+!
+interface GigabitEthernet0/1
+ description to client
+ ip address 10.0.0.6 255.255.255.252
+ ip flow ingress
+ ip flow egress
+!
+interface GigabitEthernet0/2
+ description to server
+ ip address 10.0.0.9 255.255.255.252
+ ip flow ingress
+ ip flow egress
+!
+!
+ip flow-export version 5
+ip flow-export destination 172.16.1.10 9995 vrf Mgmt-intf
+!
+
+- NetFlow v5 parser output:
+
+echou@ubuntu:~/Python_Network_Programming/section3_4$ python3 netFlow_v5_parser.py
+Headers:
+NetFlow Version: 5
+Flow Count: 30
+System Uptime: 833182
+Epoch Time in seconds: 1517281816
+Epoch Time in nanoseconds: 356732040
+Sequence counter of total flow: 1
+0  10.0.0.5:33638 -> 10.0.0.10:8000 5 packts 346 bytes
+1  10.0.0.5:33638 -> 10.0.0.10:8000 5 packts 346 bytes
+2  10.0.0.10:8000 -> 10.0.0.5:33638 5 packts 922 bytes
+
+- sFlowtool example: 
+
+echou@ubuntu:~/Python_Network_Programming/section3_4$ sflowtool -p 6343
+startDatagram =================================
+datagramSourceIP 172.16.1.105
+datagramSize 696
+unixSecondsUTC 1517282712
+datagramVersion 5
+agentSubId 100000
+agent 172.16.1.105
+packetSequenceNo 10
+sysUpTime 0
+samplesInPacket 1
+...
+
+- sFlowtool parser output
+
+$ sflowtool -p 6343 | python3 sflowtool_parse.py > output.txt
+$ cat output.txt
+agent 172.16.1.105
+
+
+
+
